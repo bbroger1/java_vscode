@@ -154,7 +154,7 @@
                             <h:commandButton value="Vincular Processo" styleClass="btn btn-primary btn-sm mt-2"
                                              action="#{avaliacaoMB.setActiveTab('processos')}"
                                              onclick="_modalId='modalSelProcesso';">
-                                <f:ajax execute="@this" render=":avaliacaoForm:wrapperSelProcesso" onevent="handleAjaxComplete"/>
+                                <f:ajax execute="@this" render=":avaliacaoForm:modalSelProcessoWrapper" onevent="handleAjaxComplete"/>
                             </h:commandButton>
 
                             <!-- MODAL SELECAO PROCESSO (dentro do form principal) -->
@@ -212,7 +212,7 @@
                                                                        action="#{avaliacaoMB.prepararVinculo('fator', risco.id)}"
                                                                        onclick="_modalId='modalSelFator';">
                                                              <i class="fas fa-link"/>
-                                                             <f:ajax execute="@this" render=":avaliacaoForm:wrapperSelFator" onevent="handleAjaxComplete"/>
+                                                             <f:ajax execute="@this" render=":avaliacaoForm:wrapperSelFator, :avaliacaoForm:modalSelFatorWrapper" onevent="handleAjaxComplete"/>
                                                         </h:commandLink>
                                                     </h:column>
                                                 </h:dataTable>
@@ -394,7 +394,7 @@
                             </div>
                         </h:panelGroup>
 
-                        <h:panelGroup id="wrapperSelRisco">
+                        <h:panelGroup id="wrapperSelRisco" layout="block">
                             <ui:include src="/WEB-INF/templates/includes/modal-selecao.xhtml">
                                 <ui:param name="modalId" value="modalSelRisco"/>
                                 <ui:param name="entidadeLabel" value="Risco"/>
@@ -407,7 +407,7 @@
                             </ui:include>
                         </h:panelGroup>
 
-                        <h:panelGroup id="wrapperSelFator">
+                        <h:panelGroup id="wrapperSelFator" layout="block">
                             <ui:include src="/WEB-INF/templates/includes/modal-selecao.xhtml">
                                 <ui:param name="modalId" value="modalSelFator"/>
                                 <ui:param name="entidadeLabel" value="Fator"/>
@@ -419,7 +419,7 @@
                             </ui:include>
                         </h:panelGroup>
 
-                        <h:panelGroup id="wrapperSelControle">
+                        <h:panelGroup id="wrapperSelControle" layout="block">
                             <ui:include src="/WEB-INF/templates/includes/modal-selecao.xhtml">
                                 <ui:param name="modalId" value="modalSelControle"/>
                                 <ui:param name="entidadeLabel" value="Controle"/>
@@ -432,7 +432,7 @@
                             </ui:include>
                         </h:panelGroup>
 
-                        <h:panelGroup id="wrapperSelTeste">
+                        <h:panelGroup id="wrapperSelTeste" layout="block">
                             <ui:include src="/WEB-INF/templates/includes/modal-selecao.xhtml">
                                 <ui:param name="modalId" value="modalSelTeste"/>
                                 <ui:param name="entidadeLabel" value="Teste"/>
