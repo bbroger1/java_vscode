@@ -119,11 +119,12 @@
                                     </h:commandButton>
                                 </div>
                                 <div class="card-body">
-                                    <div class="text-center py-4 text-muted"
-                                         rendered="#{empty avaliacaoMB.arvoreProcessos}">
-                                        <i class="fas fa-cubes fa-2x d-block mb-2"></i>
-                                        <span>Nenhum processo vinculado. Clique em <strong>Vincular Processo</strong> para adicionar.</span>
-                                    </div>
+                                    <ui:fragment rendered="#{empty avaliacaoMB.arvoreProcessos}">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-cubes fa-2x d-block mb-2"></i>
+                                            <span>Nenhum processo vinculado. Clique em <strong>Vincular Processo</strong> para adicionar.</span>
+                                        </div>
+                                    </ui:fragment>
                                     <h:dataTable value="#{avaliacaoMB.arvoreProcessos}" var="processo"
                                                  styleClass="table table-striped table-hover"
                                                  rendered="#{not empty avaliacaoMB.arvoreProcessos}">
@@ -174,11 +175,12 @@
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'riscos'}">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="text-center py-4 text-muted"
-                                         rendered="#{empty avaliacaoMB.arvoreRiscos}">
-                                        <i class="fas fa-cubes fa-2x d-block mb-2"></i>
-                                        <span>Nenhum processo vinculado. Vincule processos na aba <strong>Processos</strong> para visualizar os riscos.</span>
-                                    </div>
+                                    <ui:fragment rendered="#{empty avaliacaoMB.arvoreRiscos}">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-cubes fa-2x d-block mb-2"></i>
+                                            <span>Nenhum processo vinculado. Vincule processos na aba <strong>Processos</strong> para visualizar os riscos.</span>
+                                        </div>
+                                    </ui:fragment>
                                     <ul class="list-group list-group-flush"
                                         rendered="#{not empty avaliacaoMB.arvoreRiscos}">
                                         <ui:repeat value="#{avaliacaoMB.arvoreRiscos}" var="processo">
@@ -225,11 +227,12 @@
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'fatores'}">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="text-center py-4 text-muted"
-                                         rendered="#{empty avaliacaoMB.arvoreFatores}">
-                                        <i class="fas fa-filter fa-2x d-block mb-2"></i>
-                                        <span>Nenhum processo vinculado. Vincule processos e riscos nas abas anteriores para visualizar os fatores.</span>
-                                    </div>
+                                    <ui:fragment rendered="#{empty avaliacaoMB.arvoreFatores}">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-filter fa-2x d-block mb-2"></i>
+                                            <span>Nenhum processo vinculado. Vincule processos e riscos nas abas anteriores para visualizar os fatores.</span>
+                                        </div>
+                                    </ui:fragment>
                                     <ul class="list-group list-group-flush"
                                         rendered="#{not empty avaliacaoMB.arvoreFatores}">
                                         <ui:repeat value="#{avaliacaoMB.arvoreFatores}" var="processo">
@@ -274,11 +277,12 @@
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'controles'}">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="text-center py-4 text-muted"
-                                         rendered="#{empty avaliacaoMB.arvoreControles}">
-                                        <i class="fas fa-shield-alt fa-2x d-block mb-2"></i>
-                                        <span>Nenhum fator vinculado. Vincule fatores na aba <strong>Fatores</strong> para visualizar os controles.</span>
-                                    </div>
+                                    <ui:fragment rendered="#{empty avaliacaoMB.arvoreControles}">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-shield-alt fa-2x d-block mb-2"></i>
+                                            <span>Nenhum fator vinculado. Vincule fatores na aba <strong>Fatores</strong> para visualizar os controles.</span>
+                                        </div>
+                                    </ui:fragment>
                                     <ul class="list-group list-group-flush"
                                         rendered="#{not empty avaliacaoMB.arvoreControles}">
                                         <ui:repeat value="#{avaliacaoMB.arvoreControles}" var="processo">
@@ -328,11 +332,12 @@
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'testes'}">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="text-center py-4 text-muted"
-                                         rendered="#{empty avaliacaoMB.arvoreTestes}">
-                                        <i class="fas fa-vial fa-2x d-block mb-2"></i>
-                                        <span>Nenhum controle vinculado. Vincule controles na aba <strong>Controles</strong> para visualizar os testes.</span>
-                                    </div>
+                                    <ui:fragment rendered="#{empty avaliacaoMB.arvoreTestes}">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-vial fa-2x d-block mb-2"></i>
+                                            <span>Nenhum controle vinculado. Vincule controles na aba <strong>Controles</strong> para visualizar os testes.</span>
+                                        </div>
+                                    </ui:fragment>
                                     <ul class="list-group list-group-flush"
                                         rendered="#{not empty avaliacaoMB.arvoreTestes}">
                                         <ui:repeat value="#{avaliacaoMB.arvoreTestes}" var="processo">
