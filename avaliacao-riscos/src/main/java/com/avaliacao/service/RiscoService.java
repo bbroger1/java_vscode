@@ -29,6 +29,10 @@ public class RiscoService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<Risco> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(Risco r) {
         validarRisco(r);
         if (r.getId() != null) {

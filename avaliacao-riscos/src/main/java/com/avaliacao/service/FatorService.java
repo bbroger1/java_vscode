@@ -29,6 +29,10 @@ public class FatorService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<Fator> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(Fator f) {
         validarFator(f);
         if (f.getId() != null) {

@@ -29,6 +29,10 @@ public class TesteService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<Teste> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(Teste t) {
         validarTeste(t);
         if (t.getId() != null) {

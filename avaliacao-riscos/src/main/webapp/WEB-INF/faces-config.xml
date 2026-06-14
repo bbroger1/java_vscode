@@ -10,4 +10,8 @@
             <default-locale>pt_BR</default-locale>
         </locale-config>
     </application>
+
+    <lifecycle>
+        <phase-listener>com.avaliacao.util.PhaseListenerUtil</phase-listener>
+    </lifecycle>
 </faces-config>

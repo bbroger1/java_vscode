@@ -55,4 +55,15 @@
         <error-code>500</error-code>
         <location>/error.xhtml</location>
     </error-page>
+
+    <filter>
+        <filter-name>CSRFFilter</filter-name>
+        <filter-class>com.avaliacao.filter.CSRFFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CSRFFilter</filter-name>
+        <url-pattern>*.xhtml</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
 </web-app>

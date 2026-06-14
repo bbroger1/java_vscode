@@ -29,6 +29,10 @@ public class ProcessoService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<Processo> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(Processo p) {
         validarProcesso(p);
         if (p.getId() != null) {

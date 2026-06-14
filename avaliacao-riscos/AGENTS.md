@@ -1,6 +1,6 @@
 # AGENTS.md — Projeto Avaliação de Riscos e Controles
 
-**Última atualização:** 2026-06-07
+**Última atualização:** 2026-06-14
 
 ---
 
@@ -27,24 +27,50 @@ src/main/java/com/avaliacao/
 ├── model/           # 8 entidades (BaseEntity + Avaliacao, Processo, Risco, Fator, Controle, Teste, ModeloNegocio)
 ├── exception/       # NegocioException, InfraestruturaException (Runtime)
 ├── filter/          # CharacterEncodingFilter, CSRFFilter
-└── util/            # ConnectionFactory (JNDI), ValidadorUtil, StringEscapeUtil
+└── util/            # ConnectionFactory (JNDI), ValidadorUtil, StringEscapeUtil, PhaseListenerUtil
 
 src/main/webapp/
-├── META-INF/context.xml     # DataSource JNDI (jdbc/AvaliacaoRiscosDS)
+├── META-INF/context.xml.template  # DataSource JNDI template (não comitado)
 ├── WEB-INF/
 │   ├── web.xml, faces-config.xml
 │   └── templates/
-│       ├── layout.xhtml     # Template principal (Bootstrap, navbar, footer, scripts)
-│       └── includes/        # 12 partials (modais CRUD/seleção, campos, navbar, footer, etc.)
+│       ├── layout.xhtml     # Template principal (Bootstrap, navbar, footer, scripts, meta app-version)
+│       └── includes/        # 13 partials (modais seleção/confirmação, campos, navbar, footer, etc.)
 ├── resources/css/custom.css
 ├── resources/js/custom.js
 ├── index.xhtml (redirect → listagem)
 ├── listagem.xhtml (CRUD listagem)
-├── avaliacao.xhtml (CRUD avaliação + 6 abas)
+├── avaliacao.xhtml (CRUD avaliação + 6 abas com forms isolados)
 └── error.xhtml
 ```
 
 ---
+
+## 2.1 Estrutura de Forms em avaliacao.xhtml (NOVO)
+
+```
+avaliacao.xhtml
+├── <h:form id="avaliacaoForm" prependId="false">     # Navegação abas + Dados Básicos
+├── <h:form id="processosForm" prependId="false">      # Aba Processos + modal confirmação exclusão
+├── <h:form id="riscosForm" prependId="false">          # Aba Riscos + modal confirmação exclusão
+├── <h:form id="fatoresForm" prependId="false">         # Aba Fatores + modal confirmação exclusão
+├── <h:form id="controlesForm" prependId="false">       # Aba Controles + modal confirmação exclusão
+├── <h:form id="testesForm" prependId="false">          # Aba Testes + modal confirmação exclusão
+├── <h:form id="modalSelProcessoForm" prependId="false"> # Modal seleção Processo
+├── <h:form id="modalSelRiscoForm" prependId="false">    # Modal seleção Risco
+├── <h:form id="modalSelFatorForm" prependId="false">    # Modal seleção Fator
+├── <h:form id="modalSelControleForm" prependId="false"> # Modal seleção Controle
+├── <h:form id="modalSelTesteForm" prependId="false">    # Modal seleção Teste
+├── <h:form id="modalConfirmacaoForm" prependId="false"> # Modal confirmação genérica
+├── <h:form id="modalVisualizarForm" prependId="false">  # Modal visualizar (read-only)
+└── <h:form id="modalVinculoTesteForm" prependId="false"># Modal N:M Teste↔Controle
+```
+
+**Princípios:**
+- Cada form isolado com `prependId="false"` → IDs previsíveis para `render`/`execute`
+- Submit AJAX carrega apenas campos do form ativo (ViewState mínimo)
+- Validação isolada por form
+- Modais de confirmação exclusão pertencem ao form da aba correspondente
 
 ## 3. Decisões Técnicas Importantes
 
@@ -110,7 +136,23 @@ Um teste pode validar múltiplos controles. Isso é gerenciado pela tabela de ju
 
 ### 3.11. CSRF Filter
 
-Mapeado para `/protected/*` mas a aplicação não usa esse prefixo. O filtro **não está ativo**. Se precisar ativar, mapear para `*.xhtml` ou adicionar token CSRF nos formulários.
+Mapeado para `*.xhtml` no `web.xml`. Token CSRF incluído em todos os forms via `csrf-token.xhtml` (`<h:inputHidden id="csrfToken" name="csrfToken" value="#{sessionScope.csrfToken}"/>`). Filtro procura parâmetro terminando em `:csrfToken` (padrão JSF com prependId).
+
+### 3.12. Segurança - Credenciais Externalizadas
+
+`context.xml` removido do git. Template em `context.xml.template` com placeholders `${DB_URL}`, `${DB_USER}`, `${DB_PASSWORD}`. Configurar DataSource no Tomcat (`$CATALINA_BASE/conf/context.xml`) ou via variáveis de ambiente.
+
+### 3.13. Performance - Batch Fetch (N+1 Eliminado)
+
+`ArvoreService` refatorado para usar batch fetch via `JuncaoDAO`:
+- `listarRiscosPorProcessos(Set<Long>)`, `listarFatoresPorRiscos(Set<Long>)`, etc.
+- 6 queries fixas vs N×5 anterior
+- Services expõem `buscarPorIds(Set<Long>)` usando `CrudDAO.buscarPorIds`
+- DAOs implementam `getSqlListarTodos()` para query dinâmica com `IN` clause
+
+### 3.14. PhaseListener para Monitoramento
+
+`PhaseListenerUtil` registrado no `faces-config.xml` loga duração de cada fase JSF (FINE/INFO level). Útil para identificar gargalos no ciclo de vida.
 
 ---
 
@@ -144,6 +186,21 @@ Se o modal de edição não abrir ou mostrar dados errados, o `render=":wrapperX
 - `modal-crud.xhtml` — botão Salvar
 - `modal-selecao.xhtml` — botão Selecionar
 - `listagem.xhtml` — botões Excluir e confirmar exclusão
+
+### 4.6. CSRF Token Inválido (CORRIGIDO 2026-06-14)
+
+**Causa:** JSF prefixa `name` do `h:inputHidden` com `formId:` (ex: `avaliacaoForm:csrfToken`), filtro buscava apenas `csrfToken`.  
+**Solução:** `CSRFFilter` itera todos parâmetros procurando `paramName.endsWith(":csrfToken")`. Adicionado `id="csrfToken"` no `csrf-token.xhtml`.
+
+### 4.7. Modal Seleção sem Form Próprio (CORRIGIDO 2026-06-14)
+
+**Causa:** `modal-selecao.xhtml` tinha componentes JSF mas sem `<h:form>` próprio, causando submit do form principal inteiro.  
+**Solução:** Wrapper `<h:form id="#{modalId}Form" prependId="false">` no template. Modais movidos para fora do `avaliacaoForm` em forms isolados.
+
+### 4.8. Estrutura de Forms por Aba (REFACTOR 2026-06-14)
+
+**Causa:** Form único `avaliacaoForm` com 500+ campos causava ViewState grande, validação cruzada, submit pesado.  
+**Solução:** Form por aba (`processosForm`, `riscosForm`, `fatoresForm`, `controlesForm`, `testesForm`) + modais de confirmação exclusão por aba. Todos com `prependId="false"`.
 
 ---
 

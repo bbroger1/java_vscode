@@ -62,4 +62,9 @@ public class ProcessoDAOImpl extends GenericDAOImpl<Processo> implements Process
     public void excluir(Long id) {
         excluir(SQL_EXCLUIR, id);
     }
+
+    @Override
+    protected String getSqlListarTodos() {
+        return SQL_LISTAR_TODOS;
+    }
 }

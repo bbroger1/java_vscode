@@ -73,3 +73,10 @@ target/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+
+# Environment / Secrets
+**/META-INF/context.xml
+**/context.xml
+*.env
+*.env.local
+*.env.*
