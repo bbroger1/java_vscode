@@ -1,45 +1,55 @@
-# Build outputs
-target/
-build/
-out/
+```
+# Compiled and build artifacts
 *.class
-*.jar
-*.war
-*.ear
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
+*.pyc
+__pycache__/
 
-# Gradle
+# Dependencies
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+*.env.*
+
+# Build directories
+dist/
+build/
+target/
 .gradle/
-gradle-wrapper.jar
-!gradle-wrapper.properties
 
-# Maven
-.mvn/
-maven-wrapper.jar
-
-# IDE
-.idea/
+# Editors
 .vscode/
-*.iml
-*.ipr
-*.iws
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Test reports
-coverage/
-*.html
-
-# Temp files
-*.tmp
-*.temp
+.idea/
 *.swp
 *.swo
 
-# Existing entries
-dev-watch.ps1
-prompt.md
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Python specific
+.mypy_cache/
+.pytest_cache/
+
+# Java specific
+*.jar
+*.war
+*.ear
+```

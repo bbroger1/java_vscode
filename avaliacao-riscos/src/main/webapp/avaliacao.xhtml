@@ -6,428 +6,387 @@
     <ui:define name="conteudo">
         <ui:include src="/WEB-INF/templates/includes/mensagens.xhtml"/>
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">
-                    Avaliação: #{avaliacaoMB.avaliacao.id != null ? avaliacaoMB.avaliacao.titulo : 'Nova Avaliação'}
-                </h4>
-            </div>
-            <div class="card-body">
-                <h:form id="navForm">
+        <!-- FORM PRINCIPAL ÚNICO PARA TODAS AS ABAS -->
+        <h:form id="avaliacaoForm">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        Avaliação: #{avaliacaoMB.avaliacao.id != null ? avaliacaoMB.avaliacao.titulo : 'Nova Avaliação'}
+                    </h4>
+                </div>
+                <div class="card-body">
                     <h:panelGroup id="navTabs">
                         <ul class="nav nav-tabs" id="tabAvaliacao" role="tablist">
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'dados-basicos' ? 'active' : ''}"
                                                value="Dados Básicos"
                                                action="#{avaliacaoMB.setActiveTab('dados-basicos')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'processos' ? 'active' : ''} #{avaliacaoMB.avaliacao.id == null ? 'disabled' : ''}"
                                                value="Processos"
                                                action="#{avaliacaoMB.setActiveTab('processos')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'riscos' ? 'active' : ''} #{avaliacaoMB.avaliacao.id == null ? 'disabled' : ''}"
                                                value="Riscos"
                                                action="#{avaliacaoMB.setActiveTab('riscos')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'fatores' ? 'active' : ''} #{avaliacaoMB.avaliacao.id == null ? 'disabled' : ''}"
                                                value="Fatores"
                                                action="#{avaliacaoMB.setActiveTab('fatores')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'controles' ? 'active' : ''} #{avaliacaoMB.avaliacao.id == null ? 'disabled' : ''}"
                                                value="Controles"
                                                action="#{avaliacaoMB.setActiveTab('controles')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link #{avaliacaoMB.activeTab == 'testes' ? 'active' : ''} #{avaliacaoMB.avaliacao.id == null ? 'disabled' : ''}"
                                                value="Testes"
                                                action="#{avaliacaoMB.setActiveTab('testes')}">
-                                    <f:ajax execute="@this" render=":navForm:navTabs :tabContentInner"/>
+                                    <f:ajax execute="@this" render=":avaliacaoForm:navTabs :avaliacaoForm:tabContentInner"/>
                                 </h:commandLink>
                             </li>
                         </ul>
                     </h:panelGroup>
-                </h:form>
-                <h:form id="testeForm">
-                    <h:commandButton value="TESTE"
-                                    action="#{avaliacaoMB.teste}">
-                        <f:ajax execute="@this" render="@none"/>
-                    </h:commandButton>
-                </h:form>
-                <div class="tab-content mt-3" id="tabContent">
-                    <h:panelGroup id="tabContentInner">
+                    
+                    <div class="tab-content mt-3" id="tabContent">
+                        <h:panelGroup id="tabContentInner">
 
                         <!-- ============ DADOS BASICOS ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'dados-basicos'}">
-                            <h:form id="dadosForm">
-                                <div class="card">
-                                    <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="titulo">Título</label>
+                                        <h:inputText id="titulo" value="#{avaliacaoMB.avaliacao.titulo}"
+                                                     styleClass="form-control" required="true" maxlength="255"/>
+                                        <h:message for="titulo" styleClass="text-danger"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição</label>
+                                        <h:inputTextarea id="descricao" value="#{avaliacaoMB.avaliacao.descricao}"
+                                                         styleClass="form-control" rows="4"/>
+                                    </div>
+                                    <h:panelGroup rendered="#{avaliacaoMB.avaliacao.id != null}">
                                         <div class="form-group">
-                                            <label for="titulo">Título</label>
-                                            <h:inputText id="titulo" value="#{avaliacaoMB.avaliacao.titulo}"
-                                                         styleClass="form-control" required="true" maxlength="255"/>
-                                            <h:message for="titulo" styleClass="text-danger"/>
+                                            <label for="status">Status</label>
+                                            <h:selectOneMenu id="status" value="#{avaliacaoMB.avaliacao.status}"
+                                                             styleClass="form-control">
+                                                <f:selectItem itemValue="EM_ANDAMENTO" itemLabel="Em Andamento"/>
+                                                <f:selectItem itemValue="CONCLUIDA" itemLabel="Concluída"/>
+                                                <f:selectItem itemValue="ARQUIVADA" itemLabel="Arquivada"/>
+                                            </h:selectOneMenu>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="descricao">Descrição</label>
-                                            <h:inputTextarea id="descricao" value="#{avaliacaoMB.avaliacao.descricao}"
-                                                             styleClass="form-control" rows="4"/>
-                                        </div>
-                                        <h:panelGroup rendered="#{avaliacaoMB.avaliacao.id != null}">
-                                            <div class="form-group">
-                                                <label for="status">Status</label>
-                                                <h:selectOneMenu id="status" value="#{avaliacaoMB.avaliacao.status}"
-                                                                 styleClass="form-control">
-                                                    <f:selectItem itemValue="EM_ANDAMENTO" itemLabel="Em Andamento"/>
-                                                    <f:selectItem itemValue="CONCLUIDA" itemLabel="Concluída"/>
-                                                    <f:selectItem itemValue="ARQUIVADA" itemLabel="Arquivada"/>
-                                                </h:selectOneMenu>
-                                            </div>
-                                        </h:panelGroup>
-                                        <div class="mt-3 text-right">
-                                            <h:commandLink styleClass="btn btn-success btn-sm"
-                                                           action="#{avaliacaoMB.salvarAvaliacao}">
-                                                <i class="fas fa-save mr-1"></i>Salvar
-                                                <f:ajax execute="@form" render="@form :tabContentInner :globalMessages"/>
-                                            </h:commandLink>
-                                            <h:commandLink styleClass="btn btn-secondary btn-sm ml-2"
-                                                           action="#{avaliacaoMB.voltar}">
-                                                <i class="fas fa-arrow-left mr-1"></i>Voltar
-                                            </h:commandLink>
-                                        </div>
+                                    </h:panelGroup>
+                                    <div class="mt-3 text-right">
+                                        <h:commandLink styleClass="btn btn-success btn-sm"
+                                                       action="#{avaliacaoMB.salvarAvaliacao}">
+                                            <i class="fas fa-save mr-1"></i>Salvar
+                                            <f:ajax execute="@form" render=":avaliacaoForm:tabContentInner :globalMessages"/>
+                                        </h:commandLink>
+                                        <h:commandLink styleClass="btn btn-secondary btn-sm ml-2"
+                                                       action="#{avaliacaoMB.voltar}" immediate="true">
+                                            <i class="fas fa-arrow-left mr-1"></i>Voltar
+                                        </h:commandLink>
                                     </div>
                                 </div>
-                            </h:form>
+                            </div>
                         </h:panelGroup>
 
                         <!-- ============ ABA PROCESSOS ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'processos'}">
-                            <h:form id="processosForm">
-                                <h:commandButton value="TESTE SIMPLES"
-                                    action="#{avaliacaoMB.teste}" />
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <span class="font-weight-bold"><i class="fas fa-cubes mr-1"></i>Processos Vinculados</span>
-                                        <h:commandButton value="Teste"
-                                                        action="#{avaliacaoMB.teste}">
-                                            <f:ajax render="@form"/>
-                                        </h:commandButton>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="text-center py-4 text-muted"
-                                             rendered="#{empty avaliacaoMB.arvoreProcessos}">
-                                            <i class="fas fa-cubes fa-2x d-block mb-2"></i>
-                                            <span>Nenhum processo vinculado. Clique em <strong>Vincular Processo</strong> para adicionar.</span>
-                                        </div>
-                                        <h:dataTable value="#{avaliacaoMB.arvoreProcessos}" var="processo"
-                                                     styleClass="table table-striped table-hover"
-                                                     rendered="#{not empty avaliacaoMB.arvoreProcessos}">
-                                            <h:column><f:facet name="header">Código</f:facet>#{processo.codigo}</h:column>
-                                            <h:column><f:facet name="header">Nome</f:facet>#{processo.nome}</h:column>
-                                            <h:column><f:facet name="header">Descrição</f:facet>#{processo.descricao}</h:column>
-                                            <h:column styleClass="text-center" style="width:130px">
-                                                <f:facet name="header">Ações</f:facet>
-                                                <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
-                                                               action="#{avaliacaoMB.visualizarItem(processo)}"
-                                                               onclick="_modalId='modalVisualizar';">
-                                                     <i class="fas fa-eye"/>
-                                                     <f:ajax render=":wrapperVisualizar" onevent="handleAjaxComplete"/>
-                                                </h:commandLink>
-                                                <h:commandLink styleClass="action-icon text-danger" title="Desvincular"
-                                                               action="#{avaliacaoMB.prepararDesvincular('processo', processo.id)}"
-                                                               onclick="_modalId='modalConfirmacao';">
-                                                     <i class="fas fa-trash"/>
-                                                     <f:ajax render=":wrapperConfirmacao" onevent="handleAjaxComplete"/>
-                                                </h:commandLink>
-                                            </h:column>
-                                        </h:dataTable>
-                                    </div>
+                            <h:commandButton value="TESTE SIMPLES"
+                                action="#{avaliacaoMB.teste}" />
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="font-weight-bold"><i class="fas fa-cubes mr-1"></i>Processos Vinculados</span>
+                                    <h:commandButton value="Teste"
+                                                    action="#{avaliacaoMB.teste}">
+                                        <f:ajax render="@form"/>
+                                    </h:commandButton>
                                 </div>
-
-                                <!-- MODAL SELECAO PROCESSO (dentro do form para render @form) -->
-                                <h:panelGroup id="modalSelProcessoWrapper" layout="block">
-                                    <div class="modal fade" id="modalSelProcesso" tabindex="-1" role="dialog">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Selecionar Processo</h5>
-                                                    <button type="button" class="close" data-dismiss="modal">&#215;</button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="text-center py-4 text-muted"
-                                                        rendered="#{empty avaliacaoMB.itensSelecao}">
-                                                        <i class="fas fa-inbox fa-2x d-block mb-2"></i>
-                                                        <span>Nenhum registro encontrado.</span>
-                                                    </div>
-                                                    <h:dataTable value="#{avaliacaoMB.itensSelecao}" var="item"
-                                                                styleClass="table table-striped table-hover"
-                                                                rendered="#{not empty avaliacaoMB.itensSelecao}">
-                                                        <h:column>
-                                                            <f:facet name="header">Código</f:facet>#{item.codigo}
-                                                        </h:column>
-                                                        <h:column>
-                                                            <f:facet name="header">Nome</f:facet>#{item.nome}
-                                                        </h:column>
-                                                        <h:column styleClass="text-center" style="width:80px">
-                                                            <f:facet name="header">Selecionar</f:facet>
-                                                            <h:commandLink styleClass="btn btn-success btn-sm"
-                                                                        action="#{avaliacaoMB.selecionarItem(item)}"
-                                                                        onclick="_modalId='modalSelProcesso';">
-                                                                <i class="fas fa-check"></i>
-                                                                <f:ajax execute="@this" render="@form :globalMessages"
-                                                                        onevent="handleFecharModal"/>
-                                                            </h:commandLink>
-                                                        </h:column>
-                                                    </h:dataTable>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="card-body">
+                                    <div class="text-center py-4 text-muted"
+                                         rendered="#{empty avaliacaoMB.arvoreProcessos}">
+                                        <i class="fas fa-cubes fa-2x d-block mb-2"></i>
+                                        <span>Nenhum processo vinculado. Clique em <strong>Vincular Processo</strong> para adicionar.</span>
                                     </div>
-                                </h:panelGroup>
-                            </h:form>
+                                    <h:dataTable value="#{avaliacaoMB.arvoreProcessos}" var="processo"
+                                                 styleClass="table table-striped table-hover"
+                                                 rendered="#{not empty avaliacaoMB.arvoreProcessos}">
+                                        <h:column><f:facet name="header">Código</f:facet>#{processo.codigo}</h:column>
+                                        <h:column><f:facet name="header">Nome</f:facet>#{processo.nome}</h:column>
+                                        <h:column><f:facet name="header">Descrição</f:facet>#{processo.descricao}</h:column>
+                                        <h:column styleClass="text-center" style="width:130px">
+                                            <f:facet name="header">Ações</f:facet>
+                                            <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
+                                                           action="#{avaliacaoMB.visualizarItem(processo)}"
+                                                           onclick="_modalId='modalVisualizar';">
+                                                 <i class="fas fa-eye"/>
+                                                 <f:ajax render=":avaliacaoForm:wrapperVisualizar" onevent="handleAjaxComplete"/>
+                                            </h:commandLink>
+                                            <h:commandLink styleClass="action-icon text-danger" title="Desvincular"
+                                                           action="#{avaliacaoMB.prepararDesvincular('processo', processo.id)}"
+                                                           onclick="_modalId='modalConfirmacao';">
+                                                 <i class="fas fa-trash"/>
+                                                 <f:ajax render=":avaliacaoForm:wrapperConfirmacao" onevent="handleAjaxComplete"/>
+                                            </h:commandLink>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                            </div>
+
+                            <!-- BOTÃO VINCULAR PROCESSO -->
+                            <h:commandButton value="Vincular Processo" styleClass="btn btn-primary btn-sm mt-2"
+                                             action="#{avaliacaoMB.setActiveTab('processos')}"
+                                             onclick="_modalId='modalSelProcesso';">
+                                <f:ajax execute="@this" render=":avaliacaoForm:wrapperSelProcesso" onevent="handleAjaxComplete"/>
+                            </h:commandButton>
+
+                            <!-- MODAL SELECAO PROCESSO (dentro do form principal) -->
+                            <h:panelGroup id="modalSelProcessoWrapper" layout="block">
+                                <ui:include src="/WEB-INF/templates/includes/modal-selecao.xhtml">
+                                    <ui:param name="modalId" value="modalSelProcesso"/>
+                                    <ui:param name="entidadeLabel" value="Processo"/>
+                                    <ui:param name="bean" value="#{avaliacaoMB}"/>
+                                    <ui:define name="colunas">
+                                        <h:column><f:facet name="header">Código</f:facet>#{item.codigo}</h:column>
+                                        <h:column><f:facet name="header">Nome</f:facet>#{item.nome}</h:column>
+                                    </ui:define>
+                                </ui:include>
+                            </h:panelGroup>
                         </h:panelGroup>
 
                         <!-- ============ ABA RISCOS ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'riscos'}">
-                            <h:form id="riscosForm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="text-center py-4 text-muted"
-                                             rendered="#{empty avaliacaoMB.arvoreRiscos}">
-                                            <i class="fas fa-cubes fa-2x d-block mb-2"></i>
-                                            <span>Nenhum processo vinculado. Vincule processos na aba <strong>Processos</strong> para visualizar os riscos.</span>
-                                        </div>
-                                        <ul class="list-group list-group-flush"
-                                            rendered="#{not empty avaliacaoMB.arvoreRiscos}">
-                                            <ui:repeat value="#{avaliacaoMB.arvoreRiscos}" var="processo">
-                                                <li class="list-group-item list-group-item-primary font-weight-bold">
-                                                    <i class="fas fa-cube mr-2"></i>#{processo}
-                                                </li>
-                                                <li class="list-group-item p-0">
-                                                    <h:dataTable value="#{processo.riscos}" var="risco"
-                                                                 styleClass="table table-sm table-hover mb-0">
-                                                        <h:column><f:facet name="header">Nome</f:facet>#{risco.nome}</h:column>
-                                                        <h:column><f:facet name="header">Probabilidade</f:facet>#{risco.probabilidade}</h:column>
-                                                        <h:column><f:facet name="header">Impacto</f:facet>#{risco.impacto}</h:column>
-                                                        <h:column><f:facet name="header">Nível</f:facet>#{risco.nivel}</h:column>
-                                                        <h:column styleClass="text-center" style="width:180px">
-                                                            <f:facet name="header">Ações</f:facet>
-                                                            <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
-                                                                           action="#{avaliacaoMB.visualizarItem(risco)}"
-                                                                           onclick="_modalId='modalVisualizar';">
-                                                                 <i class="fas fa-eye"/>
-                                                                 <f:ajax render=":wrapperVisualizar" onevent="handleAjaxComplete"/>
-                                                            </h:commandLink>
-                                                            <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
-                                                                           action="#{avaliacaoMB.prepararDesvincular('risco', risco.id)}"
-                                                                           onclick="_modalId='modalConfirmacao';">
-                                                                 <i class="fas fa-trash"/>
-                                                                 <f:ajax render=":wrapperConfirmacao" onevent="handleAjaxComplete"/>
-                                                            </h:commandLink>
-                                                            <h:commandLink styleClass="action-icon text-success" title="Vincular Fator"
-                                                                           action="#{avaliacaoMB.prepararVinculo('fator', risco.id)}"
-                                                                           onclick="_modalId='modalSelFator';">
-                                                                 <i class="fas fa-link"/>
-                                                                 <f:ajax execute="@this" render="@none" onevent="handleAjaxComplete"/>
-                                                            </h:commandLink>
-                                                        </h:column>
-                                                    </h:dataTable>
-                                                </li>
-                                            </ui:repeat>
-                                        </ul>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center py-4 text-muted"
+                                         rendered="#{empty avaliacaoMB.arvoreRiscos}">
+                                        <i class="fas fa-cubes fa-2x d-block mb-2"></i>
+                                        <span>Nenhum processo vinculado. Vincule processos na aba <strong>Processos</strong> para visualizar os riscos.</span>
                                     </div>
+                                    <ul class="list-group list-group-flush"
+                                        rendered="#{not empty avaliacaoMB.arvoreRiscos}">
+                                        <ui:repeat value="#{avaliacaoMB.arvoreRiscos}" var="processo">
+                                            <li class="list-group-item list-group-item-primary font-weight-bold">
+                                                <i class="fas fa-cube mr-2"></i>#{processo}
+                                            </li>
+                                            <li class="list-group-item p-0">
+                                                <h:dataTable value="#{processo.riscos}" var="risco"
+                                                             styleClass="table table-sm table-hover mb-0">
+                                                    <h:column><f:facet name="header">Nome</f:facet>#{risco.nome}</h:column>
+                                                    <h:column><f:facet name="header">Probabilidade</f:facet>#{risco.probabilidade}</h:column>
+                                                    <h:column><f:facet name="header">Impacto</f:facet>#{risco.impacto}</h:column>
+                                                    <h:column><f:facet name="header">Nível</f:facet>#{risco.nivel}</h:column>
+                                                    <h:column styleClass="text-center" style="width:180px">
+                                                        <f:facet name="header">Ações</f:facet>
+                                                        <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
+                                                                       action="#{avaliacaoMB.visualizarItem(risco)}"
+                                                                       onclick="_modalId='modalVisualizar';">
+                                                             <i class="fas fa-eye"/>
+                                                             <f:ajax render=":avaliacaoForm:wrapperVisualizar" onevent="handleAjaxComplete"/>
+                                                        </h:commandLink>
+                                                        <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
+                                                                       action="#{avaliacaoMB.prepararDesvincular('risco', risco.id)}"
+                                                                       onclick="_modalId='modalConfirmacao';">
+                                                             <i class="fas fa-trash"/>
+                                                             <f:ajax render=":avaliacaoForm:wrapperConfirmacao" onevent="handleAjaxComplete"/>
+                                                        </h:commandLink>
+                                                        <h:commandLink styleClass="action-icon text-success" title="Vincular Fator"
+                                                                       action="#{avaliacaoMB.prepararVinculo('fator', risco.id)}"
+                                                                       onclick="_modalId='modalSelFator';">
+                                                             <i class="fas fa-link"/>
+                                                             <f:ajax execute="@this" render=":avaliacaoForm:wrapperSelFator" onevent="handleAjaxComplete"/>
+                                                        </h:commandLink>
+                                                    </h:column>
+                                                </h:dataTable>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
                                 </div>
-                            </h:form>
+                            </div>
                         </h:panelGroup>
 
                         <!-- ============ ABA FATORES ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'fatores'}">
-                            <h:form id="fatoresForm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="text-center py-4 text-muted"
-                                             rendered="#{empty avaliacaoMB.arvoreFatores}">
-                                            <i class="fas fa-filter fa-2x d-block mb-2"></i>
-                                            <span>Nenhum processo vinculado. Vincule processos e riscos nas abas anteriores para visualizar os fatores.</span>
-                                        </div>
-                                        <ul class="list-group list-group-flush"
-                                            rendered="#{not empty avaliacaoMB.arvoreFatores}">
-                                            <ui:repeat value="#{avaliacaoMB.arvoreFatores}" var="processo">
-                                                <li class="list-group-item list-group-item-primary font-weight-bold">
-                                                    <i class="fas fa-cube mr-2"></i>#{processo}
-                                                </li>
-                                                <li class="list-group-item p-0">
-                                                    <ui:repeat value="#{processo.riscos}" var="risco">
-                                                        <div class="ml-3 border-left pl-3 my-2">
-                                                            <strong class="text-secondary"><i class="fas fa-exclamation-triangle mr-1"></i>#{risco}</strong>
-                                                        </div>
-                                                        <h:dataTable value="#{risco.fatores}" var="fator"
-                                                                     styleClass="table table-sm table-hover mb-0 ml-3">
-                                                            <h:column><f:facet name="header">Nome</f:facet>#{fator.nome}</h:column>
-                                                            <h:column><f:facet name="header">Tipo</f:facet>#{fator.tipo}</h:column>
-                                                            <h:column><f:facet name="header">Descrição</f:facet>#{fator.descricao}</h:column>
-                                                            <h:column styleClass="text-center" style="width:180px">
-                                                                <f:facet name="header">Ações</f:facet>
-                                                                <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
-                                                                               action="#{avaliacaoMB.visualizarItem(fator)}"
-                                                                               onclick="_modalId='modalVisualizar';">
-                                                                     <i class="fas fa-eye"/>
-                                                                     <f:ajax render=":wrapperVisualizar" onevent="handleAjaxComplete"/>
-                                                                </h:commandLink>
-                                                                <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
-                                                                               action="#{avaliacaoMB.prepararDesvincular('fator', fator.id)}"
-                                                                               onclick="_modalId='modalConfirmacao';">
-                                                                     <i class="fas fa-trash"/>
-                                                                     <f:ajax render=":wrapperConfirmacao" onevent="handleAjaxComplete"/>
-                                                                </h:commandLink>
-                                                            </h:column>
-                                                        </h:dataTable>
-                                                    </ui:repeat>
-                                                </li>
-                                            </ui:repeat>
-                                        </ul>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center py-4 text-muted"
+                                         rendered="#{empty avaliacaoMB.arvoreFatores}">
+                                        <i class="fas fa-filter fa-2x d-block mb-2"></i>
+                                        <span>Nenhum processo vinculado. Vincule processos e riscos nas abas anteriores para visualizar os fatores.</span>
                                     </div>
+                                    <ul class="list-group list-group-flush"
+                                        rendered="#{not empty avaliacaoMB.arvoreFatores}">
+                                        <ui:repeat value="#{avaliacaoMB.arvoreFatores}" var="processo">
+                                            <li class="list-group-item list-group-item-primary font-weight-bold">
+                                                <i class="fas fa-cube mr-2"></i>#{processo}
+                                            </li>
+                                            <li class="list-group-item p-0">
+                                                <ui:repeat value="#{processo.riscos}" var="risco">
+                                                    <div class="ml-3 border-left pl-3 my-2">
+                                                        <strong class="text-secondary"><i class="fas fa-exclamation-triangle mr-1"></i>#{risco}</strong>
+                                                    </div>
+                                                    <h:dataTable value="#{risco.fatores}" var="fator"
+                                                                 styleClass="table table-sm table-hover mb-0 ml-3">
+                                                        <h:column><f:facet name="header">Nome</f:facet>#{fator.nome}</h:column>
+                                                        <h:column><f:facet name="header">Tipo</f:facet>#{fator.tipo}</h:column>
+                                                        <h:column><f:facet name="header">Descrição</f:facet>#{fator.descricao}</h:column>
+                                                        <h:column styleClass="text-center" style="width:180px">
+                                                            <f:facet name="header">Ações</f:facet>
+                                                            <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
+                                                                           action="#{avaliacaoMB.visualizarItem(fator)}"
+                                                                           onclick="_modalId='modalVisualizar';">
+                                                                 <i class="fas fa-eye"/>
+                                                                 <f:ajax render=":avaliacaoForm:wrapperVisualizar" onevent="handleAjaxComplete"/>
+                                                            </h:commandLink>
+                                                            <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
+                                                                           action="#{avaliacaoMB.prepararDesvincular('fator', fator.id)}"
+                                                                           onclick="_modalId='modalConfirmacao';">
+                                                                 <i class="fas fa-trash"/>
+                                                                 <f:ajax render=":avaliacaoForm:wrapperConfirmacao" onevent="handleAjaxComplete"/>
+                                                            </h:commandLink>
+                                                        </h:column>
+                                                    </h:dataTable>
+                                                </ui:repeat>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
                                 </div>
-                            </h:form>
+                            </div>
                         </h:panelGroup>
 
                         <!-- ============ ABA CONTROLES ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'controles'}">
-                            <h:form id="controlesForm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="text-center py-4 text-muted"
-                                             rendered="#{empty avaliacaoMB.arvoreControles}">
-                                            <i class="fas fa-shield-alt fa-2x d-block mb-2"></i>
-                                            <span>Nenhum fator vinculado. Vincule fatores na aba <strong>Fatores</strong> para visualizar os controles.</span>
-                                        </div>
-                                        <ul class="list-group list-group-flush"
-                                            rendered="#{not empty avaliacaoMB.arvoreControles}">
-                                            <ui:repeat value="#{avaliacaoMB.arvoreControles}" var="processo">
-                                                <li class="list-group-item list-group-item-primary font-weight-bold">
-                                                    <i class="fas fa-cube mr-2"></i>#{processo}
-                                                </li>
-                                                <li class="list-group-item p-0">
-                                                    <ui:repeat value="#{processo.riscos}" var="risco">
-                                                        <div class="ml-3 border-left pl-3 my-2">
-                                                            <strong class="text-secondary">#{risco}</strong>
-                                                            <ui:repeat value="#{risco.fatores}" var="fator">
-                                                                <div class="ml-3 border-left pl-3 my-2">
-                                                                    <span class="text-muted">#{fator}</span>
-                                                                </div>
-                                                                <h:dataTable value="#{fator.controles}" var="controle"
-                                                                             styleClass="table table-sm table-hover mb-0 ml-3">
-                                                                    <h:column><f:facet name="header">Nome</f:facet>#{controle.nome}</h:column>
-                                                                    <h:column><f:facet name="header">Tipo</f:facet>#{controle.tipo}</h:column>
-                                                                    <h:column><f:facet name="header">Status</f:facet>#{controle.status}</h:column>
-                                                                    <h:column styleClass="text-center" style="width:180px">
-                                                                        <f:facet name="header">Ações</f:facet>
-                                                                        <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
-                                                                                       action="#{avaliacaoMB.visualizarItem(controle)}"
-                                                                                       onclick="_modalId='modalVisualizar';">
-                                                                             <i class="fas fa-eye"/>
-                                                                             <f:ajax render=":wrapperVisualizar" onevent="handleAjaxComplete"/>
-                                                                        </h:commandLink>
-                                                                        <h:commandLink styleClass="action-icon text-danger" title="Desvincular"
-                                                                                       action="#{avaliacaoMB.prepararDesvincular('controle', controle.id)}"
-                                                                                       onclick="_modalId='modalConfirmacao';">
-                                                                             <i class="fas fa-trash"/>
-                                                                             <f:ajax render=":wrapperConfirmacao" onevent="handleAjaxComplete"/>
-                                                                        </h:commandLink>
-                                                                    </h:column>
-                                                                </h:dataTable>
-                                                            </ui:repeat>
-                                                        </div>
-                                                    </ui:repeat>
-                                                </li>
-                                            </ui:repeat>
-                                        </ul>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center py-4 text-muted"
+                                         rendered="#{empty avaliacaoMB.arvoreControles}">
+                                        <i class="fas fa-shield-alt fa-2x d-block mb-2"></i>
+                                        <span>Nenhum fator vinculado. Vincule fatores na aba <strong>Fatores</strong> para visualizar os controles.</span>
                                     </div>
+                                    <ul class="list-group list-group-flush"
+                                        rendered="#{not empty avaliacaoMB.arvoreControles}">
+                                        <ui:repeat value="#{avaliacaoMB.arvoreControles}" var="processo">
+                                            <li class="list-group-item list-group-item-primary font-weight-bold">
+                                                <i class="fas fa-cube mr-2"></i>#{processo}
+                                            </li>
+                                            <li class="list-group-item p-0">
+                                                <ui:repeat value="#{processo.riscos}" var="risco">
+                                                    <div class="ml-3 border-left pl-3 my-2">
+                                                        <strong class="text-secondary">#{risco}</strong>
+                                                        <ui:repeat value="#{risco.fatores}" var="fator">
+                                                            <div class="ml-3 border-left pl-3 my-2">
+                                                                <span class="text-muted">#{fator}</span>
+                                                            </div>
+                                                            <h:dataTable value="#{fator.controles}" var="controle"
+                                                                         styleClass="table table-sm table-hover mb-0 ml-3">
+                                                                <h:column><f:facet name="header">Nome</f:facet>#{controle.nome}</h:column>
+                                                                <h:column><f:facet name="header">Tipo</f:facet>#{controle.tipo}</h:column>
+                                                                <h:column><f:facet name="header">Status</f:facet>#{controle.status}</h:column>
+                                                                <h:column styleClass="text-center" style="width:180px">
+                                                                    <f:facet name="header">Ações</f:facet>
+                                                                    <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
+                                                                                   action="#{avaliacaoMB.visualizarItem(controle)}"
+                                                                                   onclick="_modalId='modalVisualizar';">
+                                                                         <i class="fas fa-eye"/>
+                                                                         <f:ajax render=":avaliacaoForm:wrapperVisualizar" onevent="handleAjaxComplete"/>
+                                                                    </h:commandLink>
+                                                                    <h:commandLink styleClass="action-icon text-danger" title="Desvincular"
+                                                                                   action="#{avaliacaoMB.prepararDesvincular('controle', controle.id)}"
+                                                                                   onclick="_modalId='modalConfirmacao';">
+                                                                         <i class="fas fa-trash"/>
+                                                                         <f:ajax render=":avaliacaoForm:wrapperConfirmacao" onevent="handleAjaxComplete"/>
+                                                                    </h:commandLink>
+                                                                </h:column>
+                                                            </h:dataTable>
+                                                        </ui:repeat>
+                                                    </div>
+                                                </ui:repeat>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
                                 </div>
-                            </h:form>
+                            </div>
                         </h:panelGroup>
 
                         <!-- ============ ABA TESTES ============ -->
                         <h:panelGroup rendered="#{avaliacaoMB.activeTab == 'testes'}">
-                            <h:form id="testesForm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="text-center py-4 text-muted"
-                                             rendered="#{empty avaliacaoMB.arvoreTestes}">
-                                            <i class="fas fa-vial fa-2x d-block mb-2"></i>
-                                            <span>Nenhum controle vinculado. Vincule controles na aba <strong>Controles</strong> para visualizar os testes.</span>
-                                        </div>
-                                        <ul class="list-group list-group-flush"
-                                            rendered="#{not empty avaliacaoMB.arvoreTestes}">
-                                            <ui:repeat value="#{avaliacaoMB.arvoreTestes}" var="processo">
-                                                <li class="list-group-item list-group-item-primary font-weight-bold">
-                                                    <i class="fas fa-cube mr-2"></i>#{processo}
-                                                </li>
-                                                <li class="list-group-item p-0">
-                                                    <ui:repeat value="#{processo.riscos}" var="risco">
-                                                        <div class="ml-3 border-left pl-3 my-2">
-                                                            <strong class="text-secondary">#{risco}</strong>
-                                                            <ui:repeat value="#{risco.fatores}" var="fator">
-                                                                <div class="ml-3 border-left pl-3 my-2">
-                                                                    <span class="text-muted">#{fator}</span>
-                                                                    <ui:repeat value="#{fator.controles}" var="controle">
-                                                                        <div class="ml-3 border-left pl-3 my-2">
-                                                                            <span>#{controle}</span>
-                                                                        </div>
-                                                                        <h:dataTable value="#{controle.testes}" var="teste"
-                                                                                     styleClass="table table-sm table-hover mb-0 ml-3">
-                                                                            <h:column><f:facet name="header">Nome</f:facet>#{teste.nome}</h:column>
-                                                                            <h:column><f:facet name="header">Tipo</f:facet>#{teste.tipo}</h:column>
-                                                                            <h:column><f:facet name="header">Resultado</f:facet>#{teste.resultado}</h:column>
-                                                                            <h:column styleClass="text-center" style="width:180px">
-                                                                                <f:facet name="header">Ações</f:facet>
-                                                                                <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
-                                                                                               action="#{avaliacaoMB.visualizarItem(teste)}"
-                                                                                               onclick="_modalId='modalVisualizar';">
-                                                                                     <i class="fas fa-eye"/>
-                                                                                     <f:ajax render=":wrapperVisualizar" onevent="handleAjaxComplete"/>
-                                                                                </h:commandLink>
-                                                                                <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
-                                                                                               action="#{avaliacaoMB.prepararDesvincular('teste', teste.id)}"
-                                                                                               onclick="_modalId='modalConfirmacao';">
-                                                                                     <i class="fas fa-trash"/>
-                                                                                     <f:ajax render=":wrapperConfirmacao" onevent="handleAjaxComplete"/>
-                                                                                </h:commandLink>
-                                                                                <h:commandLink styleClass="action-icon text-success" title="Vincular Controles"
-                                                                                               action="#{avaliacaoMB.prepararVinculoTesteControle(teste)}"
-                                                                                               onclick="_modalId='modalVinculoTeste';">
-                                                                                     <i class="fas fa-tasks"/>
-                                                                                     <f:ajax render=":wrapperVinculoTeste" onevent="handleAjaxComplete"/>
-                                                                                </h:commandLink>
-                                                                            </h:column>
-                                                                        </h:dataTable>
-                                                                    </ui:repeat>
-                                                                </div>
-                                                            </ui:repeat>
-                                                        </div>
-                                                    </ui:repeat>
-                                                </li>
-                                            </ui:repeat>
-                                        </ul>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center py-4 text-muted"
+                                         rendered="#{empty avaliacaoMB.arvoreTestes}">
+                                        <i class="fas fa-vial fa-2x d-block mb-2"></i>
+                                        <span>Nenhum controle vinculado. Vincule controles na aba <strong>Controles</strong> para visualizar os testes.</span>
                                     </div>
+                                    <ul class="list-group list-group-flush"
+                                        rendered="#{not empty avaliacaoMB.arvoreTestes}">
+                                        <ui:repeat value="#{avaliacaoMB.arvoreTestes}" var="processo">
+                                            <li class="list-group-item list-group-item-primary font-weight-bold">
+                                                <i class="fas fa-cube mr-2"></i>#{processo}
+                                            </li>
+                                            <li class="list-group-item p-0">
+                                                <ui:repeat value="#{processo.riscos}" var="risco">
+                                                    <div class="ml-3 border-left pl-3 my-2">
+                                                        <strong class="text-secondary">#{risco}</strong>
+                                                        <ui:repeat value="#{risco.fatores}" var="fator">
+                                                            <div class="ml-3 border-left pl-3 my-2">
+                                                                <span class="text-muted">#{fator}</span>
+                                                                <ui:repeat value="#{fator.controles}" var="controle">
+                                                                    <div class="ml-3 border-left pl-3 my-2">
+                                                                        <span>#{controle}</span>
+                                                                    </div>
+                                                                    <h:dataTable value="#{controle.testes}" var="teste"
+                                                                                 styleClass="table table-sm table-hover mb-0 ml-3">
+                                                                        <h:column><f:facet name="header">Nome</f:facet>#{teste.nome}</h:column>
+                                                                        <h:column><f:facet name="header">Tipo</f:facet>#{teste.tipo}</h:column>
+                                                                        <h:column><f:facet name="header">Resultado</f:facet>#{teste.resultado}</h:column>
+                                                                        <h:column styleClass="text-center" style="width:180px">
+                                                                            <f:facet name="header">Ações</f:facet>
+                                                                            <h:commandLink styleClass="action-icon text-info mr-2" title="Visualizar"
+                                                                                           action="#{avaliacaoMB.visualizarItem(teste)}"
+                                                                                           onclick="_modalId='modalVisualizar';">
+                                                                                 <i class="fas fa-eye"/>
+                                                                                 <f:ajax render=":avaliacaoForm:wrapperVisualizar" onevent="handleAjaxComplete"/>
+                                                                            </h:commandLink>
+                                                                            <h:commandLink styleClass="action-icon text-danger mr-2" title="Desvincular"
+                                                                                           action="#{avaliacaoMB.prepararDesvincular('teste', teste.id)}"
+                                                                                           onclick="_modalId='modalConfirmacao';">
+                                                                                 <i class="fas fa-trash"/>
+                                                                                 <f:ajax render=":avaliacaoForm:wrapperConfirmacao" onevent="handleAjaxComplete"/>
+                                                                            </h:commandLink>
+                                                                            <h:commandLink styleClass="action-icon text-success" title="Vincular Controles"
+                                                                                           action="#{avaliacaoMB.prepararVinculoTesteControle(teste)}"
+                                                                                           onclick="_modalId='modalVinculoTeste';">
+                                                                                 <i class="fas fa-tasks"/>
+                                                                                 <f:ajax render=":avaliacaoForm:wrapperVinculoTeste" onevent="handleAjaxComplete"/>
+                                                                            </h:commandLink>
+                                                                        </h:column>
+                                                                    </h:dataTable>
+                                                                </ui:repeat>
+                                                            </div>
+                                                        </ui:repeat>
+                                                    </div>
+                                                </ui:repeat>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
                                 </div>
-                            </h:form>
+                            </div>
                         </h:panelGroup>
 
                         <h:panelGroup id="wrapperSelRisco">
@@ -486,28 +445,26 @@
                             <div class="modal fade" id="modalConfirmacao" tabindex="-1" role="dialog">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                        <h:form>
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Confirmar Desvinculação</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                                                    <span aria-hidden="true">&#215;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body text-center">
-                                                <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
-                                                <p class="mb-0">#{avaliacaoMB.mensagemExclusao != null ? avaliacaoMB.mensagemExclusao : 'Confirma a desvinculação deste item?'}</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <h:commandLink styleClass="btn btn-danger btn-sm"
-                                                            action="#{avaliacaoMB.confirmarDesvinculacao}"
-                                                            onclick="_modalId='modalConfirmacao';">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Desvinculação</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                                <span aria-hidden="true">&#215;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                                            <p class="mb-0">#{avaliacaoMB.mensagemExclusao != null ? avaliacaoMB.mensagemExclusao : 'Confirma a desvinculação deste item?'}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <h:commandLink styleClass="btn btn-danger btn-sm"
+                                                        action="#{avaliacaoMB.confirmarDesvinculacao}"
+                                                        onclick="_modalId='modalConfirmacao';">
                                                     <i class="fas fa-trash mr-1"></i>Desvincular
-                                                    <f:ajax render=":tabContentInner :globalMessages"
+                                                    <f:ajax render=":avaliacaoForm:tabContentInner :globalMessages"
                                                             onevent="handleFecharModal"/>
-                                                </h:commandLink>
-                                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
-                                            </div>
-                                        </h:form>
+                                            </h:commandLink>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -540,31 +497,29 @@
                             <div class="modal fade" id="modalVinculoTeste" tabindex="-1" role="dialog">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <h:form>
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Vincular Controles ao Teste</h5>
-                                                <button type="button" class="close" data-dismiss="modal">&#215;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h:dataTable value="#{avaliacaoMB.mapSelecaoControles.entrySet()}" var="entry"
-                                                            styleClass="table table-sm table-hover">
-                                                    <h:column>
-                                                        <f:facet name="header">Selecionar</f:facet>
-                                                        <h:selectBooleanCheckbox value="#{entry.value}"/>
-                                                    </h:column>
-                                                    <h:column><f:facet name="header">ID Controle</f:facet>#{entry.key}</h:column>
-                                                </h:dataTable>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <h:commandLink styleClass="btn btn-primary btn-sm"
-                                                            action="#{avaliacaoMB.salvarVinculosTeste}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Vincular Controles ao Teste</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&#215;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h:dataTable value="#{avaliacaoMB.mapSelecaoControles.entrySet()}" var="entry"
+                                                        styleClass="table table-sm table-hover">
+                                                <h:column>
+                                                    <f:facet name="header">Selecionar</f:facet>
+                                                    <h:selectBooleanCheckbox value="#{entry.value}"/>
+                                                </h:column>
+                                                <h:column><f:facet name="header">ID Controle</f:facet>#{entry.key}</h:column>
+                                            </h:dataTable>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <h:commandLink styleClass="btn btn-primary btn-sm"
+                                                        action="#{avaliacaoMB.salvarVinculosTeste}">
                                                     <i class="fas fa-save mr-1"></i>Salvar Vínculos
-                                                    <f:ajax execute="@form" render=":tabContentInner :globalMessages"
+                                                    <f:ajax execute="@form" render=":avaliacaoForm:tabContentInner :globalMessages"
                                                             onevent="handleFecharModal"/>
-                                                </h:commandLink>
-                                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
-                                            </div>
-                                        </h:form>
+                                            </h:commandLink>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -573,6 +528,6 @@
                     </h:panelGroup>
                 </div>
             </div>
-        </div>
+        </h:form>
     </ui:define>
 </ui:composition>
