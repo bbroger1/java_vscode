@@ -1,0 +1,45 @@
+# Build outputs
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle
+.gradle/
+gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Maven
+.mvn/
+maven-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test reports
+coverage/
+*.html
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Existing entries
+dev-watch.ps1
+prompt.md

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<ui:composition>
+    <div class="form-group">
+        <label for="fatorRisco">Risco</label>
+        <h:selectOneMenu id="fatorRisco"
+                         value="#{avaliacaoMB.fatorSelecionado.riscoId}"
+                         styleClass="form-control" required="true">
+            <f:selectItem itemValue="" itemLabel="Selecione..."/>
+            <f:selectItems value="#{avaliacaoMB.riscos}" var="r"
+                           itemValue="#{r.id}" itemLabel="#{r.nome}"/>
+        </h:selectOneMenu>
+    </div>
+    <div class="form-group">
+        <label for="fatorNome">Nome</label>
+        <h:inputText id="fatorNome" value="#{avaliacaoMB.fatorSelecionado.nome}"
+                     styleClass="form-control" required="true" maxlength="255"/>
+    </div>
+    <div class="form-group">
+        <label for="fatorTipo">Tipo</label>
+        <h:selectOneMenu id="fatorTipo"
+                         value="#{avaliacaoMB.fatorSelecionado.tipo}"
+                         styleClass="form-control">
+            <f:selectItem itemValue="" itemLabel="Selecione..."/>
+            <f:selectItem itemValue="INTERNO" itemLabel="Interno"/>
+            <f:selectItem itemValue="EXTERNO" itemLabel="Externo"/>
+            <f:selectItem itemValue="TECNOLOGICO" itemLabel="Tecnológico"/>
+            <f:selectItem itemValue="HUMANO" itemLabel="Humano"/>
+        </h:selectOneMenu>
+    </div>
+    <div class="form-group">
+        <label for="fatorDescricao">Descrição</label>
+        <h:inputTextarea id="fatorDescricao"
+                         value="#{avaliacaoMB.fatorSelecionado.descricao}"
+                         styleClass="form-control" rows="3"/>
+    </div>
+</ui:composition>
+</html>

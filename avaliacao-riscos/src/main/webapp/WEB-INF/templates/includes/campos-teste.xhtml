@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<ui:composition>
+    <div class="form-group">
+        <label>Controles Vinculados</label>
+        <div class="table-responsive" style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px;">
+            <h:dataTable value="#{avaliacaoMB.controles}" var="c"
+                         styleClass="table table-sm table-hover mb-0"
+                         rendered="#{not empty avaliacaoMB.controles}">
+                <h:column styleClass="text-center" style="width: 50px;">
+                    <h:selectBooleanCheckbox value="#{avaliacaoMB.mapSelecaoControles[c.id]}" />
+                </h:column>
+                <h:column>
+                    #{c.nome}
+                </h:column>
+                <h:column>
+                    #{c.tipo}
+                </h:column>
+            </h:dataTable>
+            <div class="text-center py-3 text-muted" rendered="#{empty avaliacaoMB.controles}">
+                <small>Nenhum controle disponível. Cadastre controles primeiro.</small>
+            </div>
+        </div>
+        <small class="form-text text-muted">Selecione um ou mais controles que este teste irá validar.</small>
+    </div>
+    <div class="form-group">
+        <label for="testeNome">Nome</label>
+        <h:inputText id="testeNome" value="#{avaliacaoMB.testeSelecionado.nome}"
+                     styleClass="form-control" required="true" maxlength="255"/>
+    </div>
+    <div class="form-group">
+        <label for="testeTipo">Tipo</label>
+        <h:selectOneMenu id="testeTipo"
+                         value="#{avaliacaoMB.testeSelecionado.tipo}"
+                         styleClass="form-control">
+            <f:selectItem itemValue="" itemLabel="Selecione..."/>
+            <f:selectItem itemValue="AUTOMATIZADO" itemLabel="Automatizado"/>
+            <f:selectItem itemValue="MANUAL" itemLabel="Manual"/>
+            <f:selectItem itemValue="REVISAO" itemLabel="Revisão"/>
+        </h:selectOneMenu>
+    </div>
+    <div class="form-group">
+        <label for="testeResultado">Resultado</label>
+        <h:selectOneMenu id="testeResultado"
+                         value="#{avaliacaoMB.testeSelecionado.resultado}"
+                         styleClass="form-control">
+            <f:selectItem itemValue="NAO_EXECUTADO" itemLabel="Não Executado"/>
+            <f:selectItem itemValue="EM_ANDAMENTO" itemLabel="Em Andamento"/>
+            <f:selectItem itemValue="APROVADO" itemLabel="Aprovado"/>
+            <f:selectItem itemValue="REPROVADO" itemLabel="Reprovado"/>
+        </h:selectOneMenu>
+    </div>
+    <div class="form-group">
+        <label for="testeDataExecucao">Data de Execução</label>
+        <h:inputText id="testeDataExecucao"
+                     value="#{avaliacaoMB.testeSelecionado.dataExecucao}"
+                     styleClass="form-control">
+            <f:convertDateTime pattern="yyyy-MM-dd"/>
+        </h:inputText>
+    </div>
+    <div class="form-group">
+        <label for="testeDescricao">Descrição</label>
+        <h:inputTextarea id="testeDescricao"
+                         value="#{avaliacaoMB.testeSelecionado.descricao}"
+                         styleClass="form-control" rows="3"/>
+    </div>
+</ui:composition>
+</html>

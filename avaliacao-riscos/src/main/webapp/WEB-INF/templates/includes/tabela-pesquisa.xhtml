@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition>
+    <div class="form-group">
+        <label for="filtroInput">Pesquisar</label>
+        <h:inputText id="filtroInput"
+                     value="#{bean.filtro}"
+                     styleClass="form-control"
+                     placeholder="Digite para pesquisar...">
+            <f:ajax event="keyup" render="tabelaResultados paginacao"
+                    listener="#{bean.pesquisar}" delay="300"/>
+        </h:inputText>
+    </div>
+
+    <h:panelGroup id="tabelaResultados">
+        <ui:insert name="tabela"/>
+    </h:panelGroup>
+
+    <h:panelGroup id="paginacao" layout="block" styleClass="mt-3">
+        <ui:include src="/WEB-INF/templates/includes/paginacao.xhtml"/>
+    </h:panelGroup>
+</ui:composition>
+</html>

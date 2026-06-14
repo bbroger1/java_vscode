@@ -1,0 +1,33 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="conteudo">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0 text-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Erro na aplicação
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="mb-1">Ocorreu um erro inesperado.</p>
+                <p class="text-muted">Entre em contato com o administrador do sistema.</p>
+
+                <h:panelGroup rendered="#{facesContext.application.projectStage == 'Development'}">
+                    <hr/>
+                    <h6>Detalhes do erro (modo desenvolvimento):</h6>
+                    <pre class="bg-light p-3 mt-2" style="font-size:0.8rem;overflow:auto;max-height:400px;">
+                        <code>#{requestScope['javax.servlet.error.exception']}</code>
+                    </pre>
+                    <pre class="bg-light p-3 mt-2" style="font-size:0.8rem;overflow:auto;max-height:400px;">
+                        <code>#{requestScope['javax.servlet.error.message']}</code>
+                    </pre>
+                </h:panelGroup>
+
+                <a href="javascript:history.back()" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left mr-1"></i>Voltar
+                </a>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
