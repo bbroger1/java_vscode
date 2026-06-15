@@ -62,4 +62,9 @@ public class FatorDAOImpl extends GenericDAOImpl<Fator> implements FatorDAO {
     public void excluir(Long id) {
         excluir(SQL_EXCLUIR, id);
     }
+
+    @Override
+    protected String getSqlListarTodos() {
+        return SQL_LISTAR_TODOS;
+    }
 }

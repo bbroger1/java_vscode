@@ -198,4 +198,37 @@ public abstract class GenericDAOImpl<T> implements Serializable {
             fecharRecursos(conn, stmt, rs);
         }
     }
+
+    public List<T> buscarPorIds(java.util.Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+        String sql = getSqlListarTodos().replace("ORDER BY", "WHERE id IN (" + placeholders + ") ORDER BY");
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = obterConexao();
+            stmt = conn.prepareStatement(sql);
+            int i = 1;
+            for (Long id : ids) {
+                stmt.setLong(i++, id);
+            }
+            rs = stmt.executeQuery();
+            List<T> lista = new java.util.ArrayList<>();
+            while (rs.next()) {
+                lista.add(mapearLinha(rs));
+            }
+            return lista;
+        } catch (SQLException e) {
+            throw new InfraestruturaException("Erro ao buscar registros por IDs", e);
+        } finally {
+            fecharRecursos(conn, stmt, rs);
+        }
+    }
+
+    protected String getSqlListarTodos() {
+        return "";
+    }
 }

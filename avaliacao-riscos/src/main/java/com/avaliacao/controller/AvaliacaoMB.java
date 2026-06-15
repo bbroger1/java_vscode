@@ -6,6 +6,7 @@ import com.avaliacao.dto.*;
 import com.avaliacao.model.*;
 import com.avaliacao.service.*;
 import com.avaliacao.util.DebugLog;
+import com.avaliacao.exception.NegocioException;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -118,40 +119,114 @@ public class AvaliacaoMB implements Serializable {
     // MODAL DE SELECAO (Vincular entidade existente)
     // =========================================================
 
-    public void pesquisarSelecao(ActionEvent event) {
-        System.out.println("ENTROU");
-        System.out.println(">>> ENTROU EM pesquisarSelecao! activeTab=" + activeTab);
-        DebugLog.log("pesquisarSelecao() chamado. activeTab=" + activeTab);
+    private void executarPesquisaSelecao() {
+        String tipo = (tipoVinculo != null && !tipoVinculo.isEmpty()) ? tipoVinculo : activeTab;
+        System.out.println(">>> ENTROU EM executarPesquisaSelecao! tipo=" + tipo + ", filtro=" + filtroSelecao);
+        DebugLog.log("executarPesquisaSelecao() chamado. tipo=" + tipo + ", filtro=" + filtroSelecao);
         try {
-            switch (activeTab) {
+            switch (tipo) {
                 case "processos":
-                    DebugLog.log("Carregando processos do banco...");
-                    itensSelecao = processoService.listarTodos();
+                case "processo":
+                    List<Processo> processos = arvoreService.listarProcessosDisponiveis(avaliacao.getId());
+                    if (filtroSelecao != null && !filtroSelecao.trim().isEmpty()) {
+                        String f = filtroSelecao.trim().toLowerCase();
+                        List<Processo> filtrados = new ArrayList<>();
+                        for (Processo p : processos) {
+                            if ((p.getNome() != null && p.getNome().toLowerCase().contains(f))
+                                || (p.getCodigo() != null && p.getCodigo().toLowerCase().contains(f))) {
+                                filtrados.add(p);
+                            }
+                        }
+                        itensSelecao = filtrados;
+                    } else {
+                        itensSelecao = processos;
+                    }
                     break;
                 case "riscos":
-                    itensSelecao = riscoService.listarTodos();
+                case "risco":
+                    List<Risco> riscos = riscoService.listarTodos();
+                    if (filtroSelecao != null && !filtroSelecao.trim().isEmpty()) {
+                        String f = filtroSelecao.trim().toLowerCase();
+                        List<Risco> filtrados = new ArrayList<>();
+                        for (Risco r : riscos) {
+                            if (r.getNome() != null && r.getNome().toLowerCase().contains(f)) {
+                                filtrados.add(r);
+                            }
+                        }
+                        itensSelecao = filtrados;
+                    } else {
+                        itensSelecao = riscos;
+                    }
                     break;
                 case "fatores":
-                    itensSelecao = fatorService.listarTodos();
+                case "fator":
+                    List<Fator> fatores = fatorService.listarTodos();
+                    if (filtroSelecao != null && !filtroSelecao.trim().isEmpty()) {
+                        String f = filtroSelecao.trim().toLowerCase();
+                        List<Fator> filtrados = new ArrayList<>();
+                        for (Fator fa : fatores) {
+                            if (fa.getNome() != null && fa.getNome().toLowerCase().contains(f)) {
+                                filtrados.add(fa);
+                            }
+                        }
+                        itensSelecao = filtrados;
+                    } else {
+                        itensSelecao = fatores;
+                    }
                     break;
                 case "controles":
-                    itensSelecao = controleService.listarTodos();
+                case "controle":
+                    List<Controle> controles = controleService.listarTodos();
+                    if (filtroSelecao != null && !filtroSelecao.trim().isEmpty()) {
+                        String f = filtroSelecao.trim().toLowerCase();
+                        List<Controle> filtrados = new ArrayList<>();
+                        for (Controle c : controles) {
+                            if (c.getNome() != null && c.getNome().toLowerCase().contains(f)) {
+                                filtrados.add(c);
+                            }
+                        }
+                        itensSelecao = filtrados;
+                    } else {
+                        itensSelecao = controles;
+                    }
                     break;
                 case "testes":
-                    itensSelecao = testeService.listarTodos();
+                case "teste":
+                    List<Teste> testes = testeService.listarTodos();
+                    if (filtroSelecao != null && !filtroSelecao.trim().isEmpty()) {
+                        String f = filtroSelecao.trim().toLowerCase();
+                        List<Teste> filtrados = new ArrayList<>();
+                        for (Teste t : testes) {
+                            if (t.getNome() != null && t.getNome().toLowerCase().contains(f)) {
+                                filtrados.add(t);
+                            }
+                        }
+                        itensSelecao = filtrados;
+                    } else {
+                        itensSelecao = testes;
+                    }
                     break;
+                default:
+                    itensSelecao = null;
             }
             DebugLog.log("itensSelecao=" + (itensSelecao == null ? "null" : itensSelecao.size() + " itens"));
-            if (itensSelecao == null || itensSelecao.isEmpty()) {
-                adicionarMensagem(FacesMessage.SEVERITY_WARN, "Nenhum registro encontrado para vincular.");
-            } else {
-                adicionarMensagem(FacesMessage.SEVERITY_INFO, itensSelecao.size() + " registro(s) carregado(s).");
-            }
         } catch (Exception e) {
             itensSelecao = null;
-            DebugLog.log("ERRO em pesquisarSelecao: " + e.getMessage(), e);
+            DebugLog.log("ERRO em executarPesquisaSelecao: " + e.getMessage(), e);
             adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao carregar dados: " + e.getMessage());
         }
+    }
+
+    public void pesquisarSelecao(javax.faces.event.AjaxBehaviorEvent event) {
+        executarPesquisaSelecao();
+    }
+
+    public void pesquisarSelecao(ActionEvent event) {
+        executarPesquisaSelecao();
+    }
+
+    public void pesquisarSelecao() {
+        executarPesquisaSelecao();
     }
 
     public void selecionarItem(Object item) {
@@ -161,35 +236,42 @@ public class AvaliacaoMB implements Serializable {
             return;
         }
         try {
-            switch (activeTab) {
-                case "processos":
-                    arvoreService.vincularProcessoAvaliacao(avaliacao.getId(), ((Processo) item).getId());
-                    arvoreProcessos = arvoreService.carregarProcessos(avaliacao.getId());
-                    break;
-                case "riscos":
-                    arvoreService.vincularRiscoProcesso(avaliacao.getId(), parentIdSelecao, ((Risco) item).getId());
-                    arvoreRiscos = arvoreService.carregarRiscos(avaliacao.getId());
-                    break;
-                case "fatores":
-                    Long processoIdRf = obterProcessoIdPorRisco(avaliacao.getId(), parentIdSelecao);
-                    arvoreService.vincularFatorRisco(avaliacao.getId(), processoIdRf, parentIdSelecao, ((Fator) item).getId());
-                    arvoreFatores = arvoreService.carregarFatores(avaliacao.getId());
-                    break;
-                case "controles":
-                    Long processoIdFc = obterProcessoIdPorFator(avaliacao.getId(), parentIdSelecao);
-                    Long riscoIdFc = obterRiscoIdPorFator(avaliacao.getId(), parentIdSelecao);
-                    arvoreService.vincularControleFator(avaliacao.getId(), processoIdFc, riscoIdFc, parentIdSelecao, ((Controle) item).getId());
-                    arvoreControles = arvoreService.carregarControles(avaliacao.getId());
-                    break;
-                case "testes":
-                    Long processoIdCt = obterProcessoIdPorControle(avaliacao.getId(), parentIdSelecao);
-                    Long riscoIdCt = obterRiscoIdPorControle(avaliacao.getId(), parentIdSelecao);
-                    Long fatorIdCt = obterFatorIdPorControle(avaliacao.getId(), parentIdSelecao);
-                    arvoreService.vincularTesteControle(avaliacao.getId(), processoIdCt, riscoIdCt, fatorIdCt, parentIdSelecao, ((Teste) item).getId());
-                    arvoreTestes = arvoreService.carregarTestes(avaliacao.getId());
-                    break;
+            if (item instanceof Processo) {
+                arvoreService.vincularProcessoAvaliacao(avaliacao.getId(), ((Processo) item).getId());
+                arvoreProcessos = arvoreService.carregarProcessos(avaliacao.getId());
+            } else if (item instanceof Risco) {
+                if (parentIdSelecao == null) {
+                    throw new NegocioException("O processo pai não foi selecionado.");
+                }
+                arvoreService.vincularRiscoProcesso(avaliacao.getId(), parentIdSelecao, ((Risco) item).getId());
+                arvoreRiscos = arvoreService.carregarRiscos(avaliacao.getId());
+            } else if (item instanceof Fator) {
+                if (parentIdSelecao == null) {
+                    throw new NegocioException("O risco pai não foi selecionado.");
+                }
+                Long processoIdRf = obterProcessoIdPorRisco(avaliacao.getId(), parentIdSelecao);
+                arvoreService.vincularFatorRisco(avaliacao.getId(), processoIdRf, parentIdSelecao, ((Fator) item).getId());
+                arvoreFatores = arvoreService.carregarFatores(avaliacao.getId());
+            } else if (item instanceof Controle) {
+                if (parentIdSelecao == null) {
+                    throw new NegocioException("O fator pai não foi selecionado.");
+                }
+                Long processoIdFc = obterProcessoIdPorFator(avaliacao.getId(), parentIdSelecao);
+                Long riscoIdFc = obterRiscoIdPorFator(avaliacao.getId(), parentIdSelecao);
+                arvoreService.vincularControleFator(avaliacao.getId(), processoIdFc, riscoIdFc, parentIdSelecao, ((Controle) item).getId());
+                arvoreControles = arvoreService.carregarControles(avaliacao.getId());
+            } else if (item instanceof Teste) {
+                if (parentIdSelecao == null) {
+                    throw new NegocioException("O controle pai não foi selecionado.");
+                }
+                Long processoIdCt = obterProcessoIdPorControle(avaliacao.getId(), parentIdSelecao);
+                Long riscoIdCt = obterRiscoIdPorControle(avaliacao.getId(), parentIdSelecao);
+                Long fatorIdCt = obterFatorIdPorControle(avaliacao.getId(), parentIdSelecao);
+                arvoreService.vincularTesteControle(avaliacao.getId(), processoIdCt, riscoIdCt, fatorIdCt, parentIdSelecao, ((Teste) item).getId());
+                arvoreTestes = arvoreService.carregarTestes(avaliacao.getId());
             }
             parentIdSelecao = null;
+            tipoVinculo = null;
             adicionarMensagem(FacesMessage.SEVERITY_INFO, "Vinculo realizado com sucesso!");
         } catch (Exception e) {
             adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao vincular: " + e.getMessage());
@@ -248,7 +330,23 @@ public class AvaliacaoMB implements Serializable {
     // =========================================================
 
     public void visualizarItem(Object item) {
+        System.out.println(">>> visualizarItem chamado com: " + (item != null ? item.getClass().getName() + " -> " + item.toString() : "null"));
         this.itemVisualizar = item;
+    }
+
+    public void prepararVisualizar() {
+        System.out.println(">>> prepararVisualizar chamado. itemVisualizar: " + (itemVisualizar != null ? itemVisualizar.getClass().getName() + " -> " + itemVisualizar.toString() : "null"));
+    }
+
+    public String getTipoItemVisualizar() {
+        if (itemVisualizar == null) {
+            return "";
+        }
+        String name = itemVisualizar.getClass().getSimpleName();
+        if (name.endsWith("DTO")) {
+            return name.substring(0, name.length() - 3).toLowerCase();
+        }
+        return name.toLowerCase();
     }
 
     // =========================================================
@@ -258,6 +356,8 @@ public class AvaliacaoMB implements Serializable {
     public void prepararVinculo(String tipoVinculo, Long parentId) {
         this.tipoVinculo = tipoVinculo;
         this.parentIdSelecao = parentId;
+        this.filtroSelecao = "";
+        executarPesquisaSelecao();
     }
 
     // =========================================================

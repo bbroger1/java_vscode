@@ -10,6 +10,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <h:form id="#{modalId}Form">
+                    <ui:include src="/WEB-INF/templates/includes/csrf-token.xhtml"/>
                     <div class="modal-header">
                         <h5 class="modal-title" id="#{modalId}Label">#{titulo}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">

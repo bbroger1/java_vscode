@@ -29,6 +29,10 @@ public class ControleService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<Controle> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(Controle c) {
         validarControle(c);
         if (c.getId() != null) {

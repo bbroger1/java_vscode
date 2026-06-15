@@ -29,6 +29,10 @@ public class ModeloNegocioService implements Serializable {
         return dao.listarTodos();
     }
 
+    public List<ModeloNegocio> buscarPorIds(java.util.Set<Long> ids) {
+        return dao.buscarPorIds(ids);
+    }
+
     public Long salvar(ModeloNegocio m) {
         ValidadorUtil.validarObrigatorio(m.getNome(), "Nome");
         ValidadorUtil.validarTamanhoMaximo(m.getNome(), 255, "Nome");

@@ -44,4 +44,12 @@ public interface JuncaoDAO {
     void removerVinculoTesteControle(Long testeId, Long controleId);
     void limparVinculosTeste(Long testeId);
     List<Long> listarControlesPorTeste(Long testeId);
+
+    // === BATCH FETCH METHODS ===
+    java.util.Map<Long, java.util.List<Long>> listarRiscosPorProcessos(java.util.Set<Long> processoIds);
+    java.util.Map<Long, java.util.List<Long>> listarFatoresPorRiscos(java.util.Set<Long> riscoIds);
+    java.util.Map<Long, java.util.List<Long>> listarControlesPorFatores(java.util.Set<Long> fatorIds);
+    java.util.Map<Long, java.util.List<Long>> listarTestesPorControles(java.util.Set<Long> controleIds);
+    java.util.Map<Long, java.util.List<Long>> listarModelosPorControles(java.util.Set<Long> controleIds);
+    java.util.Map<Long, java.util.List<Long>> listarControlesPorTestes(java.util.Set<Long> testeIds);
 }

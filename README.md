@@ -7,6 +7,8 @@ Sistema web para registro e gestão de avaliações de riscos e controles organi
 Aplicação Java EE (JSF 2.2) para gestão hierárquica de avaliações de risco:
 **Avaliação → Processo → Risco → Fator → Controle → Teste**
 
+**Versão atual:** 1.1.0 (ver `<meta name="app-version" content="1.1.0"/>` em `layout.xhtml`)
+
 ## 🛠️ Stack Tecnológica
 
 | Tecnologia | Versão |
@@ -26,27 +28,33 @@ Aplicação Java EE (JSF 2.2) para gestão hierárquica de avaliações de risco
 avaliacao-riscos/
 ├── src/main/java/com/avaliacao/
 │   ├── controller/     # Managed Beans (@ViewScoped)
-│   ├── dao/            # DAOs com JDBC + GenericDAO
+│   ├── dao/            # DAOs com JDBC + GenericDAO (batch fetch)
 │   ├── service/        # Regras de negócio e validação
 │   ├── model/          # Entidades (BaseEntity + 7 modelos)
 │   ├── exception/      # NegocioException, InfraestruturaException
 │   ├── filter/         # CharacterEncodingFilter, CSRFFilter
-│   └── util/           # ConnectionFactory, ValidadorUtil, StringEscapeUtil
+│   └── util/           # ConnectionFactory, ValidadorUtil, StringEscapeUtil, PhaseListenerUtil
 ├── src/main/webapp/
-│   ├── META-INF/context.xml    # DataSource JNDI
+│   ├── META-INF/context.xml.template   # DataSource JNDI template (não comitado)
 │   ├── WEB-INF/
 │   │   ├── web.xml, faces-config.xml
-│   │   ├── templates/          # layout.xhtml + 12 partials
+│   │   ├── templates/          # layout.xhtml + 13 partials
 │   ├── resources/
 │   │   ├── css/custom.css
 │   │   └── js/custom.js
 │   ├── index.xhtml
 │   ├── listagem.xhtml
-│   ├── avaliacao.xhtml
+│   ├── avaliacao.xhtml         # Forms isolados por aba + modais
 │   └── error.xhtml
 ├── pom.xml
 └── sql/ddl-avaliacao-riscos.sql
 ```
+
+## 🔒 Segurança (v1.1.0+)
+
+- **Credenciais externalizadas:** `context.xml` não comitado, template com placeholders `${DB_URL}`, `${DB_USER}`, `${DB_PASSWORD}`
+- **CSRF Protection ativo:** Filter mapeado para `*.xhtml`, token em todos os forms via `csrf-token.xhtml`
+- **Headers de segurança recomendados:** Configurar no Tomcat/Reverse Proxy (X-Frame-Options, CSP, HSTS)
 
 ## 🚀 Como Executar
 
@@ -70,7 +78,7 @@ GRANT ALL PRIVILEGES ON DATABASE avaliacao_riscos TO postgres;
 psql -U postgres -d avaliacao_riscos -f sql/ddl-avaliacao-riscos.sql
 ```
 
-3. Configure o DataSource no Tomcat (`conf/server.xml` ou `META-INF/context.xml`):
+3. Configure o DataSource no Tomcat (`$CATALINA_BASE/conf/context.xml`):
 ```xml
 <Resource name="jdbc/AvaliacaoRiscosDS"
           auth="Container"
@@ -81,8 +89,11 @@ psql -U postgres -d avaliacao_riscos -f sql/ddl-avaliacao-riscos.sql
           password="root"
           maxTotal="20"
           maxIdle="10"
-          maxWaitMillis="-1"/>
+          maxWaitMillis="-1"
+          validationQuery="SELECT 1"
+          testOnBorrow="true"/>
 ```
+> **Nota:** Não use `META-INF/context.xml` do WAR. Use o template `context.xml.template` como referência e configure no Tomcat.
 
 ### Build e Deploy
 
@@ -133,11 +144,16 @@ O projeto **requer JDK 8** devido às dependências do JSF 2.2/Mojarra. Configur
 
 ### JNDI DataSource
 - Nome: `java:comp/env/jdbc/AvaliacaoRiscosDS`
-- Configurado em `src/main/webapp/META-INF/context.xml`
+- Configurar no Tomcat (`$CATALINA_BASE/conf/context.xml`) - **não usar `META-INF/context.xml` do WAR**
 
 ### Filtros
 - `CharacterEncodingFilter` - UTF-8 em todas as requisições
-- `CSRFFilter` - Mapeado para `/protected/*` (não ativo na configuração atual)
+- `CSRFFilter` - Mapeado para `*.xhtml` (ativo), token via `csrf-token.xhtml`
+
+### Monitoramento JSF (v1.1.0+)
+- `PhaseListenerUtil` registrado em `faces-config.xml`
+- Loga duração de cada fase JSF (RESTORE_VIEW → RENDER_RESPONSE)
+- Níveis: FINE (início/fim), INFO (duração em ms)
 
 ## 🐛 Problemas Conhecidos e Soluções
 
@@ -147,6 +163,19 @@ O projeto **requer JDK 8** devido às dependências do JSF 2.2/Mojarra. Configur
 | Erros não detectados no modal | Seletor `.alert-danger` incorreto | Usar `li.error, li.fatal` |
 | `onevent` inline falha | JSF interpreta como expressão | Usar funções nomeadas (`handleAjaxComplete`, etc.) |
 | Optional chaining (`?.`) falha | Não suportado em browsers antigos | Substituir por `if (obj) obj.method()` |
+| CSRF Token inválido (403) | JSF prefixa `name` com `formId:` | Filter procura `paramName.endsWith(":csrfToken")` + `id="csrfToken"` no inputHidden |
+| Modal seleção não carrega dados | Sem `<h:form>` próprio no modal | Wrapper `<h:form id="#{modalId}Form" prependId="false">` no template |
+| ViewState grande / submit lento | Form único com todas as abas | Forms isolados por aba + modais (`prependId="false"`) |
+| Modal visualizar vazio | Sem container JSF atualizável no modal body | Envolver com `<h:panelGroup id="modalVisualizarCorpo">` e exibir os dados condicionalmente em grids Bootstrap. |
+| Botão sem destaque / Tabela desalinhada | Estilos herdados e falta de alinhamento nas células | Aplicar estilos inline com `!important` e usar os atributos `columnClasses` / `headerClasses` na dataTable. |
+| Tomcat cai ao encerrar o agente | Árvore de processos filhos finalizada pelo OS | Rodar script de deploy de forma independente via `Start-Process cmd.exe`. |
+
+## ⚡ Performance (v1.1.0+)
+
+- **Batch Fetch:** `ArvoreService` usa `JuncaoDAO` batch methods (`listarRiscosPorProcessos`, `listarFatoresPorRiscos`, etc.) — 6 queries fixas vs N×5 anterior
+- **CrudDAO.buscarPorIds(Set<Long>):** Implementação genérica com `IN` clause
+- **Forms isolados:** Submit AJAX carrega apenas campos do form ativo (ViewState mínimo)
+- **Índices recomendados:** FKs nas tabelas de junção (`avaliacao_processo`, `processo_risco`, `risco_fator`, `fator_controle`, `controle_teste`, `teste_controle`)
 
 ## 📝 Scripts Úteis
 
@@ -162,6 +191,12 @@ mvn test
 
 # Limpar target
 mvn clean
+
+# Hot reload (desenvolvimento)
+powershell -File dev-watch.ps1
+
+# Deploy automatizado (Windows - admin)
+.\deploy-avaliacao.bat
 ```
 
 ## 📄 Licença

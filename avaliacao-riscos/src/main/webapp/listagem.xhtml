@@ -6,6 +6,7 @@
     <ui:define name="conteudo">
         <h:messages id="globalMessages" globalOnly="true" styleClass="alert alert-dismissible fade show"/>
         <h:form id="listagemForm">
+            <ui:include src="/WEB-INF/templates/includes/csrf-token.xhtml"/>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Avaliações de Riscos e Controles</h4>
@@ -105,7 +106,7 @@
                                         <f:ajax render="tabelaAvaliacoes paginacao"/>
                                     </h:commandLink>
                                 </li>
-                                <ui:repeat value="#{listagemMB.totalPaginas}" var="p">
+                                <ui:repeat value="#{listagemMB.listaPaginas}" var="p">
                                     <li class="page-item #{listagemMB.pagina == p ? 'active' : ''}">
                                         <h:commandLink styleClass="page-link" value="#{p}"
                                                        action="#{listagemMB.irParaPagina(p)}">

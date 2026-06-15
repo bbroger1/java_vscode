@@ -281,4 +281,90 @@ public class JuncaoDAOImpl implements JuncaoDAO, Serializable {
             fecharRecursos(conn, stmt, rs);
         }
     }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarRiscosPorProcessos(java.util.Set<Long> processoIds) {
+        if (processoIds == null || processoIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(processoIds.size(), "?"));
+        String sql = "SELECT processo_id, risco_id FROM processo_risco WHERE processo_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, processoIds);
+    }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarFatoresPorRiscos(java.util.Set<Long> riscoIds) {
+        if (riscoIds == null || riscoIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(riscoIds.size(), "?"));
+        String sql = "SELECT risco_id, fator_id FROM risco_fator WHERE risco_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, riscoIds);
+    }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarControlesPorFatores(java.util.Set<Long> fatorIds) {
+        if (fatorIds == null || fatorIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(fatorIds.size(), "?"));
+        String sql = "SELECT fator_id, controle_id FROM fator_controle WHERE fator_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, fatorIds);
+    }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarTestesPorControles(java.util.Set<Long> controleIds) {
+        if (controleIds == null || controleIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(controleIds.size(), "?"));
+        String sql = "SELECT controle_id, teste_id FROM controle_teste WHERE controle_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, controleIds);
+    }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarModelosPorControles(java.util.Set<Long> controleIds) {
+        if (controleIds == null || controleIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(controleIds.size(), "?"));
+        String sql = "SELECT controle_id, modelo_negocio_id FROM controle_modelo_negocio WHERE controle_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, controleIds);
+    }
+
+    @Override
+    public java.util.Map<Long, java.util.List<Long>> listarControlesPorTestes(java.util.Set<Long> testeIds) {
+        if (testeIds == null || testeIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+        String placeholders = String.join(",", java.util.Collections.nCopies(testeIds.size(), "?"));
+        String sql = "SELECT teste_id, controle_id FROM teste_controle WHERE teste_id IN (" + placeholders + ")";
+        return executarBatchListarIds(sql, testeIds);
+    }
+
+    private java.util.Map<Long, java.util.List<Long>> executarBatchListarIds(String sql, java.util.Set<Long> ids) {
+        java.util.Map<Long, java.util.List<Long>> resultado = new java.util.HashMap<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = obterConexao();
+            stmt = conn.prepareStatement(sql);
+            int i = 1;
+            for (Long id : ids) {
+                stmt.setLong(i++, id);
+            }
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                Long parentId = rs.getLong(1);
+                Long childId = rs.getLong(2);
+                resultado.computeIfAbsent(parentId, k -> new java.util.ArrayList<>()).add(childId);
+            }
+            return resultado;
+        } catch (SQLException e) {
+            throw new InfraestruturaException("Erro ao executar batch listar ids", e);
+        } finally {
+            fecharRecursos(conn, stmt, rs);
+        }
+    }
 }
