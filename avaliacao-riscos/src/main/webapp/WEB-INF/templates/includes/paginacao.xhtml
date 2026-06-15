@@ -13,7 +13,7 @@
                     <f:ajax render="tabelaResultados paginacao"/>
                 </h:commandLink>
             </li>
-            <ui:repeat value="#{bean.totalPaginas}" var="p">
+            <ui:repeat value="#{bean.listaPaginas}" var="p">
                 <li class="page-item #{bean.pagina == p ? 'active' : ''}">
                     <h:commandLink styleClass="page-link" value="#{p}"
                                    action="#{bean.irParaPagina(p)}">

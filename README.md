@@ -166,6 +166,9 @@ O projeto **requer JDK 8** devido às dependências do JSF 2.2/Mojarra. Configur
 | CSRF Token inválido (403) | JSF prefixa `name` com `formId:` | Filter procura `paramName.endsWith(":csrfToken")` + `id="csrfToken"` no inputHidden |
 | Modal seleção não carrega dados | Sem `<h:form>` próprio no modal | Wrapper `<h:form id="#{modalId}Form" prependId="false">` no template |
 | ViewState grande / submit lento | Form único com todas as abas | Forms isolados por aba + modais (`prependId="false"`) |
+| Modal visualizar vazio | Sem container JSF atualizável no modal body | Envolver com `<h:panelGroup id="modalVisualizarCorpo">` e exibir os dados condicionalmente em grids Bootstrap. |
+| Botão sem destaque / Tabela desalinhada | Estilos herdados e falta de alinhamento nas células | Aplicar estilos inline com `!important` e usar os atributos `columnClasses` / `headerClasses` na dataTable. |
+| Tomcat cai ao encerrar o agente | Árvore de processos filhos finalizada pelo OS | Rodar script de deploy de forma independente via `Start-Process cmd.exe`. |
 
 ## ⚡ Performance (v1.1.0+)
 

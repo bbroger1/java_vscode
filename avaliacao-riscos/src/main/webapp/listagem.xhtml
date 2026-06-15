@@ -106,7 +106,7 @@
                                         <f:ajax render="tabelaAvaliacoes paginacao"/>
                                     </h:commandLink>
                                 </li>
-                                <ui:repeat value="#{listagemMB.totalPaginas}" var="p">
+                                <ui:repeat value="#{listagemMB.listaPaginas}" var="p">
                                     <li class="page-item #{listagemMB.pagina == p ? 'active' : ''}">
                                         <h:commandLink styleClass="page-link" value="#{p}"
                                                        action="#{listagemMB.irParaPagina(p)}">

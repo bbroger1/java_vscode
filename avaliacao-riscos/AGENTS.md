@@ -202,6 +202,26 @@ Se o modal de edição não abrir ou mostrar dados errados, o `render=":wrapperX
 **Causa:** Form único `avaliacaoForm` com 500+ campos causava ViewState grande, validação cruzada, submit pesado.  
 **Solução:** Form por aba (`processosForm`, `riscosForm`, `fatoresForm`, `controlesForm`, `testesForm`) + modais de confirmação exclusão por aba. Todos com `prependId="false"`.
 
+### 4.9. Modais de Visualizar Vazios (CORRIGIDO 2026-06-15)
+ 
+**Causa:** O modal de visualizar abria sem os detalhes das entidades porque a view não continha um container JSF (`h:panelGroup`) atualizável via AJAX no corpo do modal. Além disso, a tentativa de usar `f:setPropertyActionListener` sem a execução do datatable pai falhava em resolver o row context no ciclo de vida JSF.
+**Solução:**
+- Adicionado o wrapper `<h:panelGroup id="modalVisualizarCorpo" layout="block">` ao corpo do modal.
+- Criado layout de grid rico condicional em [avaliacao.xhtml](file:///c:/Users/bbrog/OneDrive/Desktop/java_vscode/avaliacao-riscos/src/main/webapp/avaliacao.xhtml) exibindo os campos correspondentes para cada tipo de DTO (`ProcessoDTO`, `RiscoDTO`, `FatorDTO`, `ControleDTO`, `TesteDTO`).
+- Adicionado método helper `getTipoItemVisualizar()` e restaurada a passagem do objeto da linha diretamente via método de ação EL (`action="#{avaliacaoMB.visualizarItem(xxx)}"`), que preserva o contexto da linha de maneira robusta.
+ 
+### 4.10. Layout e Contraste na aba Riscos (CORRIGIDO 2026-06-15)
+ 
+**Causa:** O botão "Vincular Risco" tinha baixo contraste (texto branco sobre fundo azul claro) devido à herança de classes do container de cabeçalho `.list-group-item-primary`. Além disso, os dados da tabela de Riscos estavam todos alinhados à esquerda por padrão.
+**Solução:**
+- Aplicado estilo inline de alta especificidade no link de vinculação do Risco para impor fundo azul escuro (`#0056b3`) e texto branco legível.
+- Configurados os atributos `columnClasses` e `headerClasses` na `<h:dataTable>` de riscos para centralizar horizontalmente os dados e cabeçalhos de **Probabilidade**, **Impacto**, **Nível** e **Ações**.
+ 
+### 4.11. Execução do Deploy e Queda do Tomcat (CORRIGIDO 2026-06-15)
+ 
+**Causa:** A execução de `deploy-avaliacao.bat` através do shell do agente de IA era encerrada abruptamente ao término da execução do agente, derrubando o servidor Tomcat.
+**Solução:** Executado o deploy no Windows por meio de `Start-Process cmd.exe` de forma independente no PowerShell, o que abre um Prompt de Comando independente que persiste mesmo após a finalização do agente.
+
 ---
 
 ## 5. Comandos Úteis

@@ -59,7 +59,7 @@ public class CSRFFilter implements Filter {
                 logAllParameters(req);
             }
             
-            if (requestToken == null || (sessionToken != null && !sessionToken.equals(requestToken))) {
+            if (requestToken == null || sessionToken == null || !sessionToken.equals(requestToken)) {
                 LOG.warning("Token CSRF inválido. Session: " + sessionToken + ", Request: " + requestToken);
                 res.sendError(HttpServletResponse.SC_FORBIDDEN,
                     "Token CSRF invalido.");

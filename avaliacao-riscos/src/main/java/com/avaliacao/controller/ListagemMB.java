@@ -108,6 +108,14 @@ public class ListagemMB implements Serializable {
         return totalPaginas;
     }
 
+    public List<Integer> getListaPaginas() {
+        List<Integer> list = new java.util.ArrayList<>();
+        for (int i = 1; i <= totalPaginas; i++) {
+            list.add(i);
+        }
+        return list;
+    }
+
     public Long getIdParaExcluir() {
         return idParaExcluir;
     }
